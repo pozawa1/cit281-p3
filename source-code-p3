@@ -1,0 +1,128 @@
+// p3-module.js
+
+// Returns true if coin is a value of either 1, 5, 10, 25, 50, or 100
+function validDenomination(coin) {return ([1, 5, 10, 25, 50, 100].indexOf(coin) !== -1) ? true : false};
+
+// console.log(validDenomination(1)); // Returns true
+// console.log(validDenomination(2)); // Returns false
+
+// Returns the calculated value of obj
+function valueFromCoinObject(obj) {
+    const { denom = 0, count = 0 } = obj;
+    return count * denom;
+}
+
+// console.log(valueFromCoinObject( {denom: 25, count: 3} )); // Returns 75
+
+/*
+let coins = [{
+    denom: 25,
+    count: 3
+},
+{ 
+    denom: 50,
+    count: 1
+}];
+
+let total = coins.reduce((acc, val) => {
+    return acc + valueFromCoinObject({denom: val.denom, count: val.count});
+}, 0);
+
+console.log(total); // Returns 125
+*/
+
+// Iterates through an array of coin objects and returns the final calculated value of all coin objects
+function valueFromArray(arr) {
+    if(Array.isArray(arr[0])) {
+        arr =arr[0];
+    }
+       return arr.reduce((acc, val) => {
+        return acc + valueFromCoinObject({denom: val.denom, count: val.count});
+    }, 0);
+}
+
+// console.log(valueFromArray([{denom: 50, count: 4}, {denom: 25, count: 3}])); //Returns 275
+
+// Calls and returns the result of valueFromArray() function
+function coinCount(...coinage) {
+    return valueFromArray(coinage);
+}
+
+module.exports = {coinCount};
+
+console.log("{}", coinCount({denom: 5, count: 3}));
+console.log("{}s", coinCount({denom: 5, count: 3},{denom: 10, count: 2}));
+const coins = [{denom: 25, count: 2},{denom: 1, count: 7}];
+console.log("...[{}]", coinCount(...coins));
+console.log("[{}]", coinCount(coins));  // Extra credit
+
+// p3-server.js
+
+// Part 7
+const fs = require("fs");
+const fastify = require("fastify")();
+const { coinCount } = require('./p3-module.js')
+
+// Part 8
+fastify.get("/", (request, reply) => {
+    fs.readFile(`${__dirname}/index.html`, (err,data) => {
+        if (err) {
+            reply
+            .code(500)
+            .header('Content-Type', 'text/html; charset=utf-8')
+            .send('<h1>Error processing request</h1>')
+        } else {
+            reply
+            .code(200)
+            .header('Content-Type', 'text/html; charset=utf-8')
+            .send(data)
+        }
+    });
+});
+
+// Part 9
+fastify.get("/coin", (request, reply) => {
+    const {denom = 0, count = 0} = request.query; 
+    let coinValue = coinCount({denom, count});
+    reply
+    .code(200)
+    .header("Content-Type", "text/html; charset=utf-8")
+    .send(`<h2>Value of ${count} of ${denom} is ${coinValue}</h2><br /><a href="/">Home</a>`)
+});
+
+// Part 10
+fastify.get("/coins", (request, reply) => {
+    const {option} = request.query;
+    const coins = [{denom: 25, count: 2}, {denom: 1, count: 7}]; 
+    let coinValue;
+    switch (option) {
+        case "1":
+            coinValue = coinCount({ denom: 5, count: 3 }, { denom: 10, count: 2});
+            break;
+        case "2":
+            coinValue = coinCount(...coins);
+            break;
+        case "3":
+            coinValue = coinCount(coins);
+            break;
+        default:
+            coinValue = 0;
+    };
+    console.log(coinValue);
+    reply
+    .code(200)
+    .header("Content-Type", "text/html; charset=utf-8")
+    .send(`<h2>Option ${option} value is ${coinValue}</h2><br /><a href="/">Home</a>`)
+})
+
+// Start server and listen to requests using Fastify
+const listenIP = "localhost";
+const listenPort = 8080;
+fastify.listen(listenPort, listenIP, (err, address) => {
+    if (err) {
+        console.log(err);
+        process.exit(1);
+    }
+    console.log(`Server listening on ${address}`);
+});
+
