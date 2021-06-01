@@ -162,3 +162,7 @@ fastify.get("/coins", (request, reply) => {
     .send(`<h2>Option ${option} value is ${coinValue}</h2><br /><a href="/">Home</a>`)
 })
 ```
+
+[Source Code](https://github.com/pozawa1/cit281-p3/blob/main/source-code-p3)
+
+[Return to Homepage](https://pozawa1.github.io/)
