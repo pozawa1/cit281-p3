@@ -23,12 +23,15 @@ Initialize the cit281/p3 folder as a git repo. Add/commit the empty p3-module.js
 
 # Part 4
 The code module file, p3-module.js, will contain the following four functions:
-1. validDenomination(coin): Returns true if the coin function parameter is a valid coin value of either 1, 5, 10, 25, 50, or 100
+
+(1) validDenomination(coin): Returns true if the coin function parameter is a valid coin value of either 1, 5, 10, 25, 50, or 100
+
 ```
 function validDenomination(coin) {return ([1, 5, 10, 25, 50, 100].indexOf(coin) !== -1) ? true : false};
 ```
 
-2. valueFromCoinObject(obj): Returns the calculated value of a single coin object from the obj function parameter
+(2) valueFromCoinObject(obj): Returns the calculated value of a single coin object from the obj function parameter
+
 ```
 function valueFromCoinObject(obj) {
     const { denom = 0, count = 0 } = obj;
@@ -36,7 +39,8 @@ function valueFromCoinObject(obj) {
 }
 ```
 
-3. valueFromArray(arr): Iterates through an array of coin objects and returns the final calculated value of all coin objects
+(3) valueFromArray(arr): Iterates through an array of coin objects and returns the final calculated value of all coin objects
+
 ``` 
 function valueFromArray(arr) {
     if(Array.isArray(arr[0])) {
@@ -48,7 +52,8 @@ function valueFromArray(arr) {
 }
 ```
 
-4. coinCount(...coinage): Calls and returns the result of valueFromArray() function, which will be the value of all coin objects with the coinage array function parameter
+(4) coinCount(...coinage): Calls and returns the result of valueFromArray() function, which will be the value of all coin objects with the coinage array function parameter
+
 ```
 function coinCount(...coinage) {
     return valueFromArray(coinage);
@@ -57,6 +62,7 @@ function coinCount(...coinage) {
 
 # Part 5
 Create the file index.html, which will be displayed in your browser when navigating to the IP and port for the project web server.
+
 ```
 <!DOCTYPE html>
 <html>
@@ -85,6 +91,7 @@ Initialize the project folder as a Node.js folder, and install Fastify.
 
 # Part 7
 The server code file, p3-server.js, will import the coinCount code module function, and will contain the Node.js and Fastify web server code. 
+
 ```
 const fs = require("fs");
 const fastify = require("fastify")();
@@ -104,6 +111,7 @@ fastify.listen(listenPort, listenIP, (err, address) => {
 
 # Part 8
 Add a GET route for / that reads and returns index.html using the readFile() fs function.
+
 ```
 fastify.get("/", (request, reply) => {
     fs.readFile(`${__dirname}/index.html`, (err,data) => {
@@ -124,6 +132,7 @@ fastify.get("/", (request, reply) => {
 
 # Part 9
 Add an additional GET route, /coin, that will accept two query parameters, denom and count, and return the correct coin value.
+
 ```
 fastify.get("/coin", (request, reply) => {
     const {denom = 0, count = 0} = request.query; 
@@ -137,6 +146,7 @@ fastify.get("/coin", (request, reply) => {
 
 # Part 10
 Add another GET route, /coins, that will accept a single query parameters, option, and will return the correct coin value based on calling coinValue() with the earlier test data values, depending on the value of option.
+
 ```
 fastify.get("/coins", (request, reply) => {
     const {option} = request.query;
